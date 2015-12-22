@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+<script>
+
+function goBack() 
+  {
+    window.history.back();
+  }
+function goHome()
+  {
+    window.location = '/';   
+  }
+</script>
+
+
+<head>
+<style type="text/css">
+
+body {
+ background-image: url('images/mouse5.jpeg'), url('images/DNA3.png'), url('images/download2.jpeg');
+ background-repeat: no-repeat, no-repeat, no-repeat;
+ background-attachment: fixed, fixed, fixed;
+ background-position: 15px 55px, 1px 250px, 160px 355px;
+}
+
+.box1 {
+    width: 60px;
+    height: 40px;
+    background-color: #FFFFFF;
+    position: fixed;
+    margin-left: -50px;
+    margin-top: -50px; 
+    top: 120px;
+    left: 320px;
+}
+
+.box2 {
+   width: 60px;
+   height: 40px;
+   background-color: #FFFFFF;
+   position: fixed;
+   margin-left: -50px;
+   margin-top: -50px;
+   top: 160px;
+   left: 610px;
+}
+
+.box3 {
+    width: 60px;
+    height: 40px;
+    background-color: #FFFFFF;
+    position: fixed;
+    margin-left: -50px;
+    margin-top: -50px; 
+    top: 230px;
+    left: 320px;
+}
+
+.box5 {
+    width: 60px;
+    height: 40px;
+    background-color: #FFFFFF;
+    position: fixed;
+    margin-left: -50px;
+    margin-top: -50px; 
+    top: 410px;
+    left: 325px;
+}
+ 
+.box6 {
+    width: 40px;
+    height: 20px;
+    background-color: #FFFFFF;
+    position: fixed;
+    margin-left: -50px;
+    margin-top: -50px; 
+    top: 275px;
+    left: 504px;
+}
+
+.textbox1 {
+    width: 200px;
+}
+
+.box2 td {
+    width: 200px;
+}
+
+.box6 td {
+    width: 200px;
+    padding: 3px;
+}
+
+</style>
+</head>
+
+<body>
+<div id="page">
+ <div id="sidebar">
+  </div>
+    <p><p>
+    <form action="<% species_url %>" method="get">
+     <table class="box1" style="padding:15px">
+      <tr>
+       <td>Species::Assembly&nbsp;
+       </td>
+       <td>
+       <select class="dropdown" name="species_assembly" required> 
+        <option value disabled selected> -- select -- </option>
+       </select>
+       </td><td>
+       </td><td>&nbsp;&nbsp;&nbsp;&nbsp;
+       </td><td>Genomic&nbsp;Region&nbsp;
+       </td><td>
+       <input type="text" class="textbox1" name="genomic_region" required>
+       </td><td>
+       </td><td>&nbsp;&nbsp;&nbsp;&nbsp;
+       </td><td>Restrict&nbsp;region&nbsp;
+       </td>
+       <td>
+        <input type="radio" name="restrict_region" value="1">
+       </td><td>
+       </td><td>&nbsp;&nbsp;&nbsp;&nbsp;
+       </td><td>Strand&nbsp;
+       </td><td>
+       <select class="dropdown" name="genomic_strand">
+        <option value disabled selected> -- both -- </option>
+       </select>
+      </td></tr>
+     </table>
+     <table class="box2" style="padding:1px">
+      <tr>
+       <td>
+       <font color="#A9A9A9">&nbsp;e.g.&nbsp;9:22072246&nbsp;&#45;&nbsp;22085438</font>
+       </td>
+      </tr>
+     </table> 
+     <table class="box3" style="padding:15px">
+      <tr>
+       <td>Feature&nbsp;
+       </td><td> 
+       <select class="dropdown" name="genomic_feature" required>
+        <option value disabled selected> Transcript </option>
+       </select>
+       </td><td>
+       </td><td>&nbsp;&nbsp;&nbsp;&nbsp;
+       <td>Biotype&nbsp;
+       </td>
+       <td>
+       <select class="dropdown" name="feature_biotype">
+        <option value disabled selected> -- all -- </option>
+       </select>
+       </td><td>
+       </td><td>&nbsp;&nbsp;&nbsp;&nbsp;
+       <td>Source&nbsp;
+       </td>
+       <td>
+       <select class="dropdown" name="ott_ens">
+        <option value disabled selected> -- all -- </option>
+       </select>
+       </td>
+      </tr>
+     </table>
+     <table class="box5" style="padding:15px">
+      <tr>
+       <td>Format&nbsp;
+       </td><td>
+       <select class="dropdown" name="feature_format" required>
+        <option value disabled selected> -- select -- </option>
+       </select>
+       </td><td>
+       </td><td>&nbsp;&nbsp;&nbsp;&nbsp;
+       </td><td>
+       <input type="reset" value="Clear">
+      </td><td>&nbsp;&nbsp;&nbsp;&nbsp;
+      </td><td>
+       <input type="submit" value="Submit">
+      </td></tr>
+     </table>
+     <table class="box6">
+      <tr>
+       <td>&#33;&nbsp;
+       </td><td>
+        <input type="radio" name="not_biotype" value="1">
+       </td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+       </td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+       </td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+       </td><td>&#33;&nbsp;
+       </td><td>
+        <input type="radio" name="not_source" value="1">
+       </td>
+      </tr>
+     </table>
+    </form>
+  </div>
+ </div>
+</div>

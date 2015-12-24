@@ -22,6 +22,7 @@ body {
  background-repeat: no-repeat, no-repeat, no-repeat;
  background-attachment: fixed, fixed, fixed;
  background-position: 15px 55px, 1px 250px, 160px 355px;
+ background-color: #FFFFFF;
 }
 
 .box1 {
@@ -68,28 +69,12 @@ body {
     left: 325px;
 }
  
-.box6 {
-    width: 40px;
-    height: 20px;
-    background-color: #FFFFFF;
-    position: fixed;
-    margin-left: -50px;
-    margin-top: -50px; 
-    top: 275px;
-    left: 504px;
-}
-
 .textbox1 {
     width: 200px;
 }
 
 .box2 td {
     width: 200px;
-}
-
-.box6 td {
-    width: 200px;
-    padding: 3px;
 }
 
 </style>
@@ -103,15 +88,18 @@ body {
     <form action="<% species_url %>" method="get">
      <table class="box1" style="padding:15px">
       <tr>
-       <td>Species::Assembly&nbsp;
+       <td>Species&nbsp;
        </td>
        <td>
        <select class="dropdown" name="species_assembly" required> 
         <option value disabled selected> -- select -- </option>
+        <% FOREACH species IN species_list %>
+         <option value="<% species %>"><% species %></option>
+        <% END %>
        </select>
        </td><td>
        </td><td>&nbsp;&nbsp;&nbsp;&nbsp;
-       </td><td>Genomic&nbsp;Region&nbsp;
+       </td><td>Genomic&nbsp;region&nbsp;
        </td><td>
        <input type="text" class="textbox1" name="genomic_region" required>
        </td><td>
@@ -125,7 +113,9 @@ body {
        </td><td>Strand&nbsp;
        </td><td>
        <select class="dropdown" name="genomic_strand">
-        <option value disabled selected> -- both -- </option>
+        <option value='both'> -- both -- </option>
+        <option value='forward'> forward </option>
+        <option value='reverse'> reverse </option>
        </select>
       </td></tr>
      </table>
@@ -141,7 +131,7 @@ body {
        <td>Feature&nbsp;
        </td><td> 
        <select class="dropdown" name="genomic_feature" required>
-        <option value disabled selected> Transcript </option>
+        <option> Transcript </option>
        </select>
        </td><td>
        </td><td>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -149,16 +139,30 @@ body {
        </td>
        <td>
        <select class="dropdown" name="feature_biotype">
-        <option value disabled selected> -- all -- </option>
+        <option value='all'> -- all -- </option>
+        <% FOREACH biot IN biotypes.keys.sort %>
+         <option value="<% biot %>"> <% biot %> </option>
+        <% END %>
        </select>
+       </td><td>
+       &nbsp;&#33;
+       </td><td>
+        <input type="radio" name="not_biotype" value="1">
        </td><td>
        </td><td>&nbsp;&nbsp;&nbsp;&nbsp;
        <td>Source&nbsp;
        </td>
        <td>
-       <select class="dropdown" name="ott_ens">
-        <option value disabled selected> -- all -- </option>
+       <select class="dropdown" name="sources">
+        <option value='all'> -- all -- </option>
+        <% FOREACH source IN sources.keys.sort %>
+         <option value="<% source %>"> <% source %> </option>
+        <% END %>
        </select>
+       </td><td>
+       &nbsp;&#33;
+       </td><td>
+       <input type="radio" name="not_source" value="1">
        </td>
       </tr>
      </table>
@@ -168,6 +172,9 @@ body {
        </td><td>
        <select class="dropdown" name="feature_format" required>
         <option value disabled selected> -- select -- </option>
+        <option value="gtf"> gtf </option>
+        <option value="fasta"> fasta </option>
+        <option value="bed"> bed </option>
        </select>
        </td><td>
        </td><td>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -177,20 +184,6 @@ body {
       </td><td>
        <input type="submit" value="Submit">
       </td></tr>
-     </table>
-     <table class="box6">
-      <tr>
-       <td>&#33;&nbsp;
-       </td><td>
-        <input type="radio" name="not_biotype" value="1">
-       </td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-       </td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-       </td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-       </td><td>&#33;&nbsp;
-       </td><td>
-        <input type="radio" name="not_source" value="1">
-       </td>
-      </tr>
      </table>
     </form>
   </div>

@@ -22,7 +22,8 @@ template: "template_toolkit"
 engines:
  template:
   template_toolkit:
-  encoding:  'utf8'
-  start_tag: '<%'
-  end_tag:   '%>'
+   WRAPPER: 'layouts/main.tt'
+   encoding:  'utf8'
+   start_tag: '<%'
+   end_tag:   '%>'
 

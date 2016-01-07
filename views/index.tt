@@ -9,8 +9,31 @@ function goBack()
   }
 function goHome()
   {
+    document.getElementById("submit_form").reset();
+    window.alert = function() {};
     window.location = '/';   
   }
+
+function validate_loc()
+  {
+   var regexp1 = /^\w+\s*:\s*(\d+)\s*-\s*(\d+)\s*$/;
+   if(document.getElementById("genomic_region").value && (! regexp1.test(document.getElementById("genomic_region").value))) 
+    {
+     alert("Coordinates should be of the form:\ne.g. 9:22072246-22085438");
+     return false;
+    }
+   else
+    {
+      var match = regexp1.exec(document.getElementById("genomic_region").value);
+      var first = Math.floor(match[1]);
+      var sec   = Math.floor(match[2]);
+      if(first > sec) {
+       alert("First coordinate (" + first + ") should be <= second (" + sec + ")\ne.g. 9:22072246-22085438");
+      }
+    }
+    
+  } 
+
 </script>
 
 
@@ -85,13 +108,13 @@ body {
  <div id="sidebar">
   </div>
     <p><p>
-    <form action="<% species_url %>" method="get">
+    <form action="<% species_url %>" method="get" id="submit_form" onsubmit="return validate_loc()">
      <table class="box1" style="padding:15px">
       <tr>
        <td>Species&nbsp;
        </td>
        <td>
-       <select class="dropdown" name="species_assembly" required> 
+       <select class="dropdown" name="species" id="species" required> 
         <option value disabled selected> -- select -- </option>
         <% FOREACH species IN species_list %>
          <option value="<% species %>"><% species %></option>
@@ -101,21 +124,23 @@ body {
        </td><td>&nbsp;&nbsp;&nbsp;&nbsp;
        </td><td>Genomic&nbsp;region&nbsp;
        </td><td>
-       <input type="text" class="textbox1" name="genomic_region" required>
+       <input type="text" placeholder='-- all --' class="textbox1" name="genomic_region" id="genomic_region">
        </td><td>
+<!--
        </td><td>&nbsp;&nbsp;&nbsp;&nbsp;
        </td><td>Restrict&nbsp;region&nbsp;
        </td>
        <td>
-        <input type="radio" name="restrict_region" value="1">
+        <input type="radio" name="restrict_region" id="restrict_region" value="1">
        </td><td>
+-->
        </td><td>&nbsp;&nbsp;&nbsp;&nbsp;
        </td><td>Strand&nbsp;
        </td><td>
-       <select class="dropdown" name="genomic_strand">
-        <option value='both'> -- both -- </option>
-        <option value='forward'> forward </option>
-        <option value='reverse'> reverse </option>
+       <select class="dropdown" name="genomic_strand" id="genomic_strand">
+        <option value="both" selected> -- both -- </option>
+        <option value="forward"> forward </option>
+        <option value="reverse"> reverse </option>
        </select>
       </td></tr>
      </table>
@@ -130,8 +155,8 @@ body {
       <tr>
        <td>Feature&nbsp;
        </td><td> 
-       <select class="dropdown" name="genomic_feature" required>
-        <option> Transcript </option>
+       <select class="dropdown" name="genomic_feature">
+        <option value='transcript' selected> Transcript </option>
        </select>
        </td><td>
        </td><td>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -139,7 +164,7 @@ body {
        </td>
        <td>
        <select class="dropdown" name="feature_biotype">
-        <option value='all'> -- all -- </option>
+        <option value='all' selected> -- all -- </option>
         <% FOREACH biot IN biotypes.keys.sort %>
          <option value="<% biot %>"> <% biot %> </option>
         <% END %>
@@ -153,7 +178,7 @@ body {
        <td>Source&nbsp;
        </td>
        <td>
-       <select class="dropdown" name="sources">
+       <select class="dropdown" name="feature_source">
         <option value='all'> -- all -- </option>
         <% FOREACH source IN sources.keys.sort %>
          <option value="<% source %>"> <% source %> </option>
@@ -172,18 +197,26 @@ body {
        </td><td>
        <select class="dropdown" name="feature_format" required>
         <option value disabled selected> -- select -- </option>
-        <option value="gtf"> gtf </option>
-        <option value="fasta"> fasta </option>
-        <option value="bed"> bed </option>
+        <% FOREACH file_type IN file_types.keys.sort %>
+         <option value="<% file_type %>"><% file_type %></option>
+        <% END %>
        </select>
        </td><td>
        </td><td>&nbsp;&nbsp;&nbsp;&nbsp;
        </td><td>
-       <input type="reset" value="Clear">
+       <button button onclick="goHome()">Clear</button>
       </td><td>&nbsp;&nbsp;&nbsp;&nbsp;
       </td><td>
        <input type="submit" value="Submit">
-      </td></tr>
+      <% IF no_results %>
+       </td><td>&nbsp;&nbsp;</td>
+        <td><img src="images/sad_small.gif" align="middle" /></td><td><font color="red">&nbsp;No&nbsp;Results</font></td></tr>
+      <% ELSIF file_loc %>
+       </td><td>&nbsp;&nbsp;</td>
+       <td><a href="<% file_loc %>" download><button type="button" style="background-color:lightgreen">Download</button></a></td></tr>
+      <% ELSE %>
+       </td></tr>
+      <% END %>
      </table>
     </form>
   </div>

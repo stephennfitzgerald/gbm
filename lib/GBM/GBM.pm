@@ -14,14 +14,14 @@ our $download_dir = './public/downloads/';
 our $download_file_path = 'downloads/';
 my $cw_dir = getcwd;
 
-our %species_assm = ( # a hack to provide the assembly in order to get the correct seq_regions
- human => 'GRCh38',
- mouse => 'GRCm38',
+our %assembly_hack = ( # a hack in order to get the correct seq_regions
+ human => '-38',
+ mouse => '-38',
 ); 
 
 our %file_types = (
  bed    => \&bed,
- gtf    => \&gtf,
+# gtf    => \&gtf,
  fasta  => \&fasta,
 );
 
@@ -34,7 +34,7 @@ get '/' => sub {
  load_data(\%trans_biotypes, \@species_list, 'biotypes');
  load_data(\%sources,  \@species_list, 'sources');
 
- my ($slices, $chrom, $start, $end);
+ my ($slices, $seq_reg, $chrom, $start, $end);
  my $species = param('species');
  my $genomic_region = param('genomic_region');
  my $biotype = param('feature_biotype');
@@ -49,8 +49,17 @@ get '/' => sub {
 
  if($genomic_region && $species) {
   $slice_adaptor = $registry->get_adaptor( "$species", "core", "slice" );
-  ($chrom, $start, $end) = $genomic_region=~/\s*(\w+)\s*[:-]+\s*(\d+)\s*-+\s*(\d+)\s*$/;
-  $slices = [ $slice_adaptor->fetch_by_region('toplevel', $chrom, $start, $end) ];
+  ($seq_reg, $start, $end) = $genomic_region=~/\s*(\w+)\s*[:-]+\s*(\d+)\s*-+\s*(\d+)\s*$/;
+  $seq_reg=~s/^chr//;
+  $seq_reg .= $assembly_hack{ "$species" };
+  $chrom = 'chr' . $seq_reg;
+  my $slice = $slice_adaptor->fetch_by_region('toplevel', "$seq_reg", $start, $end);
+  if($slice) {
+   $slices = [ $slice ];
+  }
+  else {
+   $slices = [ $slice_adaptor->fetch_by_region('toplevel', "$chrom", $start, $end) ];
+  } 
  }
  elsif($species) {
   $slice_adaptor = $registry->get_adaptor( "$species", "core", "slice" );
@@ -61,9 +70,7 @@ get '/' => sub {
  } 
 
  foreach my $slice( @$slices ) {
-  my ($equiv_asm) = @{ $slice->get_all_Attributes('equiv_asm') };
-  next if(! $equiv_asm);
-  next if($equiv_asm->value ne $species_assm{ "$species" }); # ensure we only get seq_regions from the current assembly 
+  last if (($source eq 'all' && param('not_source')) || ($biotype eq 'all' && param('not_biotype')));
   foreach my $transcript(@{ $slice->get_all_Transcripts }) {
    next if (! $transcript->is_current);
    if($strand) {
@@ -118,25 +125,25 @@ sub bed {
  my($fh, $transcripts) = @_;
  foreach my $trans(@{ $transcripts }) {
   my ($seq_region_name) = $trans->seq_region_name=~/(\w+)-\d+$/xms;
-  print $fh join"\t", $seq_region_name, ($trans->seq_region_start - 1), $trans->seq_region_end, $trans->seq_region_strand, 
-            $trans->stable_id, $trans->biotype, $trans->source, $trans->get_Gene()->stable_id, "\n";
+  print $fh join("\t", $seq_region_name, ($trans->seq_region_start - 1), $trans->seq_region_end, $trans->seq_region_strand, 
+            $trans->stable_id, $trans->biotype, $trans->source, $trans->get_Gene()->stable_id), "\n";
  }
  close $fh;
  return 1;
 }
 
-sub gtf {
- my($fh, $transcripts) = @_; 
- foreach my $trans(@{ $transcripts }) {
- }
-}
+#sub gtf {
+# my($fh, $transcripts) = @_; 
+# foreach my $trans(@{ $transcripts }) {
+# }
+#}
 
 sub fasta {
  my($fh, $transcripts) = @_;
  foreach my $trans(@{ $transcripts }) {
   my ($seq_region_name) = $trans->seq_region_name=~/(\w+)-\d+$/xms;
-  print $fh '>', $seq_region_name, q{:}, $trans->seq_region_start, q{-}, $trans->seq_region_end, q{ }, $trans->seq_region_strand,
-            q{::}, join( q{::}, $trans->stable_id, $trans->biotype, $trans->source, $trans->get_Gene()->stable_id ), "\n",
+  print $fh '>', $seq_region_name, q{:}, $trans->seq_region_start, q{-}, $trans->seq_region_end, q{:}, $trans->seq_region_strand,
+            q{::}, join( q{::}, $trans->stable_id, $trans->biotype, $trans->source, $trans->get_Gene()->stable_id), "\n",
             $trans->seq()->seq, "\n";
  }
  close $fh;

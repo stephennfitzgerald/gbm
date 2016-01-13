@@ -2,37 +2,63 @@
 <html>
 
 <script>
+ 
+ var f_biotype = 1;
+ var f_source = 1;
 
-function goBack() 
-  {
-    window.history.back();
-  }
-function goHome()
-  {
-    document.getElementById("submit_form").reset();
-    window.alert = function() {};
-    window.location = '/';   
-  }
+function set_biotype() {
+ if(document.getElementById("feature_biotype").value !== "all") {
+  f_biotype = 0;
+ } 
+}
 
-function validate_loc()
-  {
-   var regexp1 = /^\w+\s*:\s*(\d+)\s*-\s*(\d+)\s*$/;
-   if(document.getElementById("genomic_region").value && (! regexp1.test(document.getElementById("genomic_region").value))) 
-    {
-     alert("Coordinates should be of the form:\ne.g. 9:22072246-22085438");
-     return false;
-    }
-   else
-    {
-      var match = regexp1.exec(document.getElementById("genomic_region").value);
-      var first = Math.floor(match[1]);
-      var sec   = Math.floor(match[2]);
-      if(first > sec) {
-       alert("First coordinate (" + first + ") should be <= second (" + sec + ")\ne.g. 9:22072246-22085438");
-      }
-    }
-    
-  } 
+function set_source() {
+ if(document.getElementById("feature_source").value !== "all") {
+  f_source = 0;
+ }
+}
+
+function check_source() {
+ if(f_source == 1) {
+  alert("Please choose a source before negating it");
+  document.getElementById("not_source").checked = false;
+ }
+}
+
+function check_biotype() {
+ if(f_biotype == 1) {
+  alert("Please choose a biotype before negating it");
+  document.getElementById("not_biotype").checked = false;
+ }
+}
+
+function goBack() {
+ window.history.back();
+}
+
+function goHome() {
+ f_source = 1;
+ f_biotype = 1;
+ document.getElementById("submit_form").reset();
+ window.alert = function() {};
+ window.location = '/';   
+}
+
+function validate_loc() {
+ var regexp1 = /^\w+\s*:\s*(\d+)\s*-\s*(\d+)\s*$/;
+ if(document.getElementById("genomic_region").value && (! regexp1.test(document.getElementById("genomic_region").value))) {
+  alert("Coordinates should be of the form:\ne.g. 9:22072246-22085438");
+  return false;
+ }
+ else {
+  var match = regexp1.exec(document.getElementById("genomic_region").value);
+  var first = Math.floor(match[1]);
+  var sec   = Math.floor(match[2]);
+  if(first > sec) {
+   alert("First coordinate (" + first + ") should be <= second (" + sec + ")\ne.g. 9:22072246-22085438");
+  }
+ }
+} 
 
 </script>
 
@@ -66,7 +92,7 @@ body {
    position: fixed;
    margin-left: -50px;
    margin-top: -50px;
-   top: 160px;
+   top: 165px;
    left: 610px;
 }
 
@@ -163,7 +189,7 @@ body {
        <td>Biotype&nbsp;
        </td>
        <td>
-       <select class="dropdown" name="feature_biotype">
+       <select class="dropdown" name="feature_biotype" id="feature_biotype" onchange="set_biotype()">
         <option value='all' selected> -- all -- </option>
         <% FOREACH biot IN biotypes.keys.sort %>
          <option value="<% biot %>"> <% biot %> </option>
@@ -172,13 +198,13 @@ body {
        </td><td>
        &nbsp;&#33;
        </td><td>
-        <input type="radio" name="not_biotype" value="1">
+        <input type="radio" name="not_biotype" id="not_biotype" value="1" onchange="check_biotype()">
        </td><td>
        </td><td>&nbsp;&nbsp;&nbsp;&nbsp;
        <td>Source&nbsp;
        </td>
        <td>
-       <select class="dropdown" name="feature_source">
+       <select class="dropdown" name="feature_source" id="feature_source" onchange="set_source()">
         <option value='all'> -- all -- </option>
         <% FOREACH source IN sources.keys.sort %>
          <option value="<% source %>"> <% source %> </option>
@@ -187,7 +213,7 @@ body {
        </td><td>
        &nbsp;&#33;
        </td><td>
-       <input type="radio" name="not_source" value="1">
+       <input type="radio" name="not_source" id="not_source" value="1" onchange="check_source()">
        </td>
       </tr>
      </table>
